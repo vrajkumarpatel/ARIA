@@ -1,0 +1,38 @@
+# Core
+python-dotenv>=1.0.0
+openai>=1.12.0
+
+# API server
+fastapi>=0.110.0
+uvicorn>=0.27.0
+
+# Semantic memory
+llama-index-core>=0.10.0
+llama-index-embeddings-openai>=0.1.0
+llama-index-llms-openai>=0.1.0
+
+# Graph memory
+neo4j>=5.14.0
+
+# WebSocket server
+websockets>=12.0
+
+# Semantic embeddings (local, no API key)
+sentence-transformers>=2.6.0
+llama-index-embeddings-huggingface>=0.2.0
+
+# Better keyword ranking
+rank-bm25>=0.2.2
+
+# Named entity extraction
+spacy>=3.7.0
+
+# Accurate token counting
+tiktoken>=0.6.0
+
+# File auto-indexing watcher
+watchdog>=4.0.0
+
+# Optional file indexing (install for PDF/DOCX support)
+# pypdf>=4.0.0
+# python-docx>=1.1.0

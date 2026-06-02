@@ -1,0 +1,45 @@
+# ── Secrets ───────────────────────────────────────────────────────────────────
+.env
+appsettings.json
+credentials.json
+token.json
+
+# ── Personal data (not for public repo) ───────────────────────────────────────
+ARIA-Memory-Vault/
+CHATGPT/
+
+# ── Third-party binaries and releases ─────────────────────────────────────────
+PersonaEngine-3.0.2-win-x64/
+handcrafted-persona-engine-main/
+build_output/
+llama-build/
+
+# ── Model weights and persisted vector index ──────────────────────────────────
+persona-mesh-agent/data/.index/
+*.safetensors
+*.gguf
+*.bin
+*.pt
+
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+env/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.user
+
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
