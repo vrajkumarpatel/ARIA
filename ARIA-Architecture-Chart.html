@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ARIA — Architecture Chart</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap');
+
+@page { size: A4 landscape; margin: 6mm; }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #fff;
+  color: #111;
+  width: 285mm;
+  height: 196mm;
+  overflow: hidden;
+  font-size: 6.5px;
+  line-height: 1.4;
+}
+
+/* HEADER */
+.hdr {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #111;
+  padding-bottom: 1.5mm;
+  margin-bottom: 2mm;
+}
+.hdr h1 { font-size: 15px; font-weight: 900; letter-spacing: -0.4px; }
+.hdr h1 em { color: #7c3aed; font-style: normal; }
+.hdr-sub { font-size: 6px; color: #666; margin-top: 0.5mm; }
+.hdr-right { font-size: 5.5px; color: #555; text-align: right; line-height: 1.6; }
+.hdr-right strong { color: #111; }
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: 56mm 1fr 56mm;
+  gap: 2.5mm;
+  height: 184mm;
+}
+
+/* COLUMN TITLES */
+.col-title {
+  font-size: 5.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #999;
+  border-bottom: 1px solid #e5e5e5;
+  padding-bottom: 1mm;
+  margin-bottom: 1.5mm;
+}
+
+/* CARDS */
+.card {
+  border: 1px solid #e5e7eb;
+  border-radius: 3px;
+  padding: 1.5mm;
+  margin-bottom: 1.5mm;
+  background: #fafafa;
+}
+.card:last-child { margin-bottom: 0; }
+.card h3 {
+  font-size: 6.5px;
+  font-weight: 700;
+  margin-bottom: 1mm;
+  display: flex;
+  align-items: center;
+  gap: 1mm;
+}
+.card p, .card li, .card td, .card th {
+  font-size: 5.5px;
+  font-family: 'JetBrains Mono', monospace;
+  color: #374151;
+  line-height: 1.55;
+}
+.card ul { list-style: none; }
+.card li::before { content: "› "; color: #aaa; }
+.card li strong, .card p strong { color: #111; font-weight: 600; }
+
+/* TABLES */
+table { width: 100%; border-collapse: collapse; }
+th {
+  background: #f3f4f6;
+  font-size: 5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 0.8mm 1mm;
+  text-align: left;
+  color: #555;
+  font-family: 'JetBrains Mono', monospace;
+}
+td {
+  padding: 0.7mm 1mm;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 5.5px;
+  font-family: 'JetBrains Mono', monospace;
+  color: #374151;
+}
+tr:last-child td { border-bottom: none; }
+.tn { text-align: right; font-weight: 600; color: #111; }
+.tg { color: #15803d; font-weight: 700; }
+
+/* PIPELINE NODES */
+.nd {
+  width: 100%;
+  border-radius: 3px;
+  border: 1.5px solid #ccc;
+  padding: 1.2mm 1.5mm;
+  position: relative;
+  flex-shrink: 0;
+}
+.nd-title {
+  font-size: 7.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 1mm;
+  margin-bottom: 0.6mm;
+}
+.nd-body {
+  font-size: 5.5px;
+  font-family: 'JetBrains Mono', monospace;
+  color: rgba(0,0,0,0.6);
+  line-height: 1.5;
+}
+.nd-body strong { color: rgba(0,0,0,0.85); font-weight: 600; }
+.badge {
+  position: absolute;
+  top: 1.2mm; right: 1.5mm;
+  font-size: 5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+  padding: 0.4mm 1mm;
+  border-radius: 2px;
+}
+
+/* Node themes */
+.n-in   { background:#f0fdf4; border-color:#16a34a; } .n-in .nd-title   { color:#15803d; } .n-in .badge   { background:#dcfce7; color:#15803d; }
+.n-asr  { background:#eff6ff; border-color:#2563eb; } .n-asr .nd-title  { color:#1d4ed8; } .n-asr .badge  { background:#dbeafe; color:#1d4ed8; }
+.n-prx  { background:#fdf4ff; border-color:#9333ea; } .n-prx .nd-title  { color:#7e22ce; } .n-prx .badge  { background:#f3e8ff; color:#7e22ce; }
+.n-llm  { background:#fff7ed; border-color:#ea580c; } .n-llm .nd-title  { color:#c2410c; } .n-llm .badge  { background:#ffedd5; color:#c2410c; }
+.n-emo  { background:#fefce8; border-color:#ca8a04; } .n-emo .nd-title  { color:#a16207; } .n-emo .badge  { background:#fef9c3; color:#a16207; }
+.n-tts  { background:#fff1f2; border-color:#e11d48; } .n-tts .nd-title  { color:#be123c; } .n-tts .badge  { background:#ffe4e6; color:#be123c; }
+.n-q3   { background:#f0fdfa; border-color:#0d9488; } .n-q3 .nd-title   { color:#0f766e; } .n-q3 .badge   { background:#ccfbf1; color:#0f766e; }
+.n-a2f  { background:#f0fdf4; border-color:#15803d; } .n-a2f .nd-title  { color:#166534; } .n-a2f .badge  { background:#dcfce7; color:#166534; }
+.n-l2d  { background:#f5f3ff; border-color:#7c3aed; } .n-l2d .nd-title  { color:#6d28d9; } .n-l2d .badge  { background:#ede9fe; color:#6d28d9; }
+
+/* ARROWS */
+.arr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: 0.8mm 0;
+  flex-shrink: 0;
+}
+.arr-line {
+  width: 1.5px;
+  height: 3mm;
+  background: linear-gradient(#bbb, #999);
+  position: relative;
+}
+.arr-line::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 50%;
+  transform: translateX(-50%);
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-top: 4px solid #999;
+}
+.arr-lbl {
+  font-size: 5px;
+  color: #aaa;
+  font-family: 'JetBrains Mono', monospace;
+  background: #fff;
+  padding: 0 0.8mm;
+  margin-top: -1mm;
+  margin-bottom: 1mm;
+  white-space: nowrap;
+}
+
+/* TTS SPLIT */
+.tts-row {
+  display: grid;
+  grid-template-columns: 1fr 5mm 1fr;
+  gap: 0;
+  width: 100%;
+  flex-shrink: 0;
+}
+.or-mid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 6px;
+  font-weight: 800;
+  color: #aaa;
+}
+
+/* STORE ROW */
+.store {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1.5mm;
+  padding: 1.2mm 1.5mm;
+  background: #f8fafc;
+  border: 1px dashed #94a3b8;
+  border-radius: 3px;
+  flex-shrink: 0;
+  margin-top: 0.8mm;
+}
+.store p {
+  font-size: 5.5px;
+  font-family: 'JetBrains Mono', monospace;
+  color: #475569;
+}
+.store p strong { color: #111; }
+
+/* MEMORY MINI-FLOW */
+.mf { display: flex; flex-direction: column; gap: 0.8mm; }
+.mb {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 2px;
+  padding: 0.8mm 1.2mm;
+  font-size: 5.5px;
+  font-family: 'JetBrains Mono', monospace;
+  color: #374151;
+  line-height: 1.4;
+}
+.mb strong { color: #7e22ce; font-weight: 600; }
+.ma { text-align: center; font-size: 6px; color: #bbb; line-height: 1; }
+
+/* PIPELINE COLUMN */
+.pipe-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* EMOTION OUTPUT SPLIT */
+.emo-out {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1mm;
+  width: 100%;
+  flex-shrink: 0;
+}
+.emo-box {
+  border: 1px dashed #ca8a04;
+  border-radius: 2px;
+  background: #fefce8;
+  padding: 0.8mm 1mm;
+  font-size: 5.5px;
+  font-family: 'JetBrains Mono', monospace;
+  color: #a16207;
+  text-align: center;
+}
+.emo-box strong { font-weight: 700; display: block; font-size: 6px; color: #92400e; }
+
+/* DOT */
+.dot { display:inline-block; width:5px; height:5px; border-radius:50%; vertical-align:middle; margin-right:0.8mm; }
+.dg{background:#16a34a;} .db{background:#2563eb;} .dp{background:#9333ea;}
+.do{background:#ea580c;} .dy{background:#ca8a04;} .dr{background:#e11d48;}
+.dt{background:#0d9488;} .dv{background:#7c3aed;}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div>
+    <h1><em>ARIA</em> — Full System Architecture &amp; Pipeline</h1>
+    <div class="hdr-sub">Adaptive Responsive Intelligent Agent &nbsp;·&nbsp; PersonaEngine 3.0.2 &nbsp;·&nbsp; NLU AI Senior Capstone — May 8, 2026</div>
+  </div>
+  <div class="hdr-right">
+    <strong>Vrajkumar Patel</strong> &nbsp;·&nbsp; NLU AI Senior<br>
+    GPU: RTX 5000-series (Blackwell SM_120a) &nbsp;·&nbsp; CUDA 12.8 &nbsp;·&nbsp; cuDNN 9.1.1 &nbsp;·&nbsp; Windows 11
+  </div>
+</div>
+
+<!-- MAIN GRID -->
+<div class="grid">
+
+  <!-- ═══ LEFT — Memory ═══ -->
+  <div>
+    <div class="col-title">Memory System</div>
+
+    <div class="card" style="border-left:3px solid #9333ea;">
+      <h3><span class="dot dp"></span>LLM Proxy — localhost:7777</h3>
+      <ul>
+        <li>Python / FastAPI / uvicorn — OpenAI-compatible</li>
+        <li>Intercepts every /v1/chat/completions call</li>
+        <li>Min gap between Groq calls: <strong>2.1s</strong> (28 RPM safe)</li>
+        <li>Retry on 429: <strong>3×</strong> at 3s / 6s / 9s backoff</li>
+        <li>History: last <strong>4 turns</strong> only (overflow prevention)</li>
+        <li>Stores each substantive turn → Obsidian vault</li>
+        <li>Skip store if &lt;40 chars or casual (hi/ok/yeah/sure)</li>
+        <li>Strips [EMOTION:X] tags before storing to vault</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>📂 Memory Request Flow</h3>
+      <div class="mf">
+        <div class="mb"><strong>① Date inject</strong>: [Current date: Thu May 08 2026] → system prompt</div>
+        <div class="ma">↓</div>
+        <div class="mb"><strong>② BM25 search</strong>: tokenize query → remove stop words → TF-IDF score all .md files → top 5 notes</div>
+        <div class="ma">↓</div>
+        <div class="mb"><strong>③ Vector search</strong>: HuggingFace all-MiniLM-L6-v2 (mock — no indexed data yet)</div>
+        <div class="ma">↓</div>
+        <div class="mb"><strong>④ ContextBuilder</strong>: dedup Jaccard ≥0.70 · rank · compress 500ch/chunk · strip HTML tags · cap at 700 chars</div>
+        <div class="ma">↓</div>
+        <div class="mb"><strong>⑤ Inject</strong>: [Background context — use only if directly relevant…] prepended to user message</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📁 Obsidian Vault</h3>
+      <p style="line-height:1.7;">
+        ARIA-Memory-Vault/<br>
+        ├── _Index.md<br>
+        ├── Conversations/ &nbsp;← 1 file per turn<br>
+        ├── Imported/<br>
+        │&nbsp;&nbsp;├── Claude/ &nbsp;ChatGPT/ &nbsp;Gemini/<br>
+        └── Topics/ &nbsp;← auto back-link nodes
+      </p>
+    </div>
+
+    <div class="card" style="border-left:3px solid #16a34a;">
+      <h3><span class="dot dg"></span>Cross-Platform Memory Import</h3>
+      <ul>
+        <li>ChatGPT export JSON → Obsidian</li>
+        <li>Claude conversation export → Obsidian</li>
+        <li>Gemini activity data → Obsidian</li>
+        <li>BM25 indexes all sources equally</li>
+        <li>ARIA inherits full AI history, not just her own</li>
+        <li>Identity pins: "who am I" → forces About-Vraj refs</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══ CENTER — Pipeline ═══ -->
+  <div class="pipe-col">
+    <div class="col-title" style="text-align:center; width:100%;">Full Request Pipeline — Turn by Turn</div>
+
+    <!-- USER -->
+    <div class="nd n-in" style="text-align:center;">
+      <div class="nd-title" style="justify-content:center; font-size:8px;">🎤 &nbsp; USER SPEAKS</div>
+      <div class="nd-body">Microphone → Silero VAD &nbsp;·&nbsp; threshold 0.5 &nbsp;·&nbsp; gap 0.15 &nbsp;·&nbsp; min speech 150ms &nbsp;·&nbsp; min silence 450ms</div>
+    </div>
+
+    <div class="arr"><div class="arr-line"></div><div class="arr-lbl">raw PCM audio</div></div>
+
+    <!-- ASR -->
+    <div class="nd n-asr">
+      <span class="badge">~370ms</span>
+      <div class="nd-title">🗣️ &nbsp;ASR — Whisper (Precise)</div>
+      <div class="nd-body"><strong>Mode:</strong> Precise &nbsp;·&nbsp; <strong>Prompt:</strong> "Aria" (hot-word bias) &nbsp;·&nbsp; <strong>Output:</strong> text transcript + word timestamps &nbsp;·&nbsp; Range: 315–468ms</div>
+    </div>
+
+    <div class="arr"><div class="arr-line"></div><div class="arr-lbl">text transcript</div></div>
+
+    <!-- PROXY -->
+    <div class="nd n-prx">
+      <span class="badge">localhost:7777</span>
+      <div class="nd-title">🧠 &nbsp;LLM Memory Proxy (Python / FastAPI)</div>
+      <div class="nd-body">
+        <strong>①</strong> Inject date into system prompt &nbsp;<strong>②</strong> BM25 search Obsidian vault (top 5) &nbsp;<strong>③</strong> Build context: dedup → rank → strip HTML → cap 700ch<br>
+        <strong>④</strong> Inject [Background context…] into user message &nbsp;<strong>⑤</strong> Trim to last 4 turns &nbsp;<strong>⑥</strong> Throttle: wait if &lt;2.1s since last Groq call
+      </div>
+    </div>
+
+    <div class="arr"><div class="arr-line"></div><div class="arr-lbl">enriched request · stream=true → Groq API</div></div>
+
+    <!-- LLM -->
+    <div class="nd n-llm">
+      <span class="badge">~3,000ms</span>
+      <div class="nd-title">⚡ &nbsp;LLM — Groq Cloud &nbsp;(llama-4-scout-17b-16e)</div>
+      <div class="nd-body">
+        <strong>Limits:</strong> 1,000 req/win · 30,000 tok/win · 500K tok/day &nbsp;·&nbsp; <strong>Output:</strong> SSE streaming tokens with inline [EMOTION:emoji] tags &nbsp;·&nbsp; <strong>Retry:</strong> 3× on 429
+      </div>
+    </div>
+
+    <div class="arr"><div class="arr-line"></div><div class="arr-lbl">SSE streaming tokens</div></div>
+
+    <!-- EMOTION -->
+    <div class="nd n-emo">
+      <span class="badge">&lt;1ms</span>
+      <div class="nd-title">🎭 &nbsp;Emotion Processor</div>
+      <div class="nd-body">Reads stream in real time · strips [EMOTION:X] tags from speech text · timestamps each tag · routes to EmotionAnimationService</div>
+    </div>
+
+    <!-- EMOTION OUTPUTS -->
+    <div class="emo-out" style="margin:0.8mm 0;">
+      <div class="emo-box"><strong>Clean text →</strong> sentences to TTS</div>
+      <div class="emo-box"><strong>Emotion events →</strong> timestamped → Live2D queue</div>
+    </div>
+
+    <div class="arr"><div class="arr-line"></div></div>
+
+    <!-- TTS SPLIT -->
+    <div class="tts-row">
+      <div class="nd n-tts" style="margin:0;">
+        <span class="badge">cloud</span>
+        <div class="nd-title" style="font-size:7px;">☁️ ElevenLabs <span style="font-size:5.5px; font-weight:400; color:#be123c;">(Active)</span></div>
+        <div class="nd-body">
+          <strong>Model:</strong> eleven_v3 &nbsp;·&nbsp; <strong>Format:</strong> pcm_24000<br>
+          Stability 0.35 · Similarity 0.75 · Style 0.65<br>
+          <strong>Latency:</strong> 800–1,500ms/sentence
+        </div>
+      </div>
+      <div class="or-mid">OR</div>
+      <div class="nd n-q3" style="margin:0;">
+        <span class="badge">local GPU</span>
+        <div class="nd-title" style="font-size:7px;">🖥️ Qwen3-TTS</div>
+        <div class="nd-body">
+          Speaker: kasumiva · Temp 0.6 · TopK 50<br>
+          RepPen 1.05 · Greedy codec · Emit:16fr<br>
+          <strong>Chunk:</strong> 1.28s &nbsp;·&nbsp; <strong>Latency:</strong> 1–3s
+        </div>
+      </div>
+    </div>
+
+    <div class="arr"><div class="arr-line"></div><div class="arr-lbl">float32 PCM @ 24kHz</div></div>
+
+    <!-- AUDIO2FACE -->
+    <div class="nd n-a2f">
+      <span class="badge">GPU · ONNX</span>
+      <div class="nd-title">👄 &nbsp;Audio2Face Lip Sync (NVIDIA)</div>
+      <div class="nd-body"><strong>Identity:</strong> James (idx 1) &nbsp;·&nbsp; <strong>Solver:</strong> BVLS &nbsp;·&nbsp; PCM → neural net → 52 ARKit blendshapes → Live2D params &nbsp;·&nbsp; cuDNN 9.1.1</div>
+    </div>
+
+    <div class="arr"><div class="arr-line"></div><div class="arr-lbl">blendshape values + emotion triggers</div></div>
+
+    <!-- LIVE2D -->
+    <div class="nd n-l2d">
+      <span class="badge">1080×1920 · 60fps</span>
+      <div class="nd-title">✨ &nbsp;Live2D Renderer + Spout Output</div>
+      <div class="nd-body"><strong>Model:</strong> aria · 17 emotions · expression blending · motion groups &nbsp;·&nbsp; <strong>Spout:</strong> Live2D 1080×1920 + Roulette 1080×1080 → OBS &nbsp;·&nbsp; Subtitles: DynaPuff 112px</div>
+    </div>
+
+    <!-- STORE BACK -->
+    <div class="store">
+      <span style="font-size:9px;">💾</span>
+      <p><strong>Proxy stores turn → Obsidian</strong> &nbsp;if ≥40 chars &amp; not casual &nbsp;·&nbsp; [EMOTION:X] stripped &nbsp;·&nbsp; topic back-links auto-generated &nbsp;·&nbsp; Topic index updated</p>
+    </div>
+
+  </div>
+
+  <!-- ═══ RIGHT — Specs ═══ -->
+  <div>
+    <div class="col-title">Performance &amp; Specs</div>
+
+    <div class="card">
+      <h3>⏱️ Latency — Real Measurements</h3>
+      <table>
+        <tr><th>Stage</th><th>Min</th><th>Typical</th><th>Max</th></tr>
+        <tr><td>STT / Whisper</td><td class="tn">315ms</td><td class="tn tg">~370ms</td><td class="tn">468ms</td></tr>
+        <tr><td>LLM / Groq</td><td class="tn">2,645ms</td><td class="tn tg">~3,000ms</td><td class="tn">4,251ms</td></tr>
+        <tr><td>TTS first chunk</td><td class="tn">800ms</td><td class="tn tg">~1,500ms</td><td class="tn">6,748ms</td></tr>
+        <tr><td><strong>End-to-end</strong></td><td class="tn">4,247ms</td><td class="tn tg">~5,000ms</td><td class="tn">11,429ms</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>🎭 17 Emotion States</h3>
+      <table>
+        <tr><th>Tag</th><th>State</th><th>Tag</th><th>State</th></tr>
+        <tr><td>[EMOTION:😊]</td><td>happy/warm</td><td>[EMOTION:😂]</td><td>laughing</td></tr>
+        <tr><td>[EMOTION:🤩]</td><td>excited</td><td>[EMOTION:💕]</td><td>affection</td></tr>
+        <tr><td>[EMOTION:😎]</td><td>cool</td><td>[EMOTION:🔥]</td><td>passionate</td></tr>
+        <tr><td>[EMOTION:💪]</td><td>determined</td><td>[EMOTION:😅]</td><td>nervous</td></tr>
+        <tr><td>[EMOTION:🤔]</td><td>thinking</td><td>[EMOTION:😤]</td><td>frustrated</td></tr>
+        <tr><td>[EMOTION:😲]</td><td>surprised</td><td>[EMOTION:😢]</td><td>sad</td></tr>
+        <tr><td>[EMOTION:👀]</td><td>suspicious</td><td colspan="2" style="color:#aaa;">→ stripped before TTS</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>🔊 Qwen3 Audio Math</h3>
+      <ul>
+        <li>1 frame = 1,920 samples @ 24kHz = <strong>80ms audio</strong></li>
+        <li>EmitEvery=16 frames → <strong>1.28s per chunk</strong></li>
+        <li>GPU gen rate: 8–12 frames/sec (RTX 5000)</li>
+        <li>Audio-gen ratio: ~0.64–0.96 (near real-time)</li>
+        <li>KV-cache: 72-frame stateful window</li>
+        <li>Fade-out: 30ms last chunk (no click/pop)</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>☁️ Groq Free Tier (live)</h3>
+      <table>
+        <tr><th>Metric</th><th>Limit</th><th>Left</th></tr>
+        <tr><td>Requests/window</td><td class="tn">1,000</td><td class="tn tg">989</td></tr>
+        <tr><td>Tokens/window</td><td class="tn">30,000</td><td class="tn tg">29,988</td></tr>
+        <tr><td>Tokens/day</td><td class="tn">500K</td><td class="tn tg">—</td></tr>
+        <tr><td>Token reset</td><td colspan="2" class="tn">~24ms (instant)</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>🧬 Full Stack</h3>
+      <table>
+        <tr><th>Layer</th><th>Technology</th></tr>
+        <tr><td>Engine</td><td>PersonaEngine 3.0.2 · C# / .NET 9</td></tr>
+        <tr><td>Avatar</td><td>Live2D Cubism SDK — aria model</td></tr>
+        <tr><td>ASR</td><td>Whisper — on-device, Precise mode</td></tr>
+        <tr><td>LLM</td><td>llama-4-scout-17b via Groq cloud</td></tr>
+        <tr><td>Proxy</td><td>Python / FastAPI / uvicorn</td></tr>
+        <tr><td>TTS primary</td><td>ElevenLabs eleven_v3 — cloud</td></tr>
+        <tr><td>TTS local</td><td>Qwen3-TTS GGUF + LLamaSharp ONNX</td></tr>
+        <tr><td>Lip sync</td><td>Audio2Face ONNX — NVIDIA neural net</td></tr>
+        <tr><td>Memory</td><td>Obsidian vault + BM25 full-text</td></tr>
+        <tr><td>GPU</td><td>RTX 5000 · SM_120a · CUDA 12.8</td></tr>
+      </table>
+    </div>
+
+    <div class="card" style="border-left:3px solid #111;">
+      <h3>🚀 Startup Order</h3>
+      <ul>
+        <li><strong>1.</strong> python llm_proxy.py → wait "7777 ready"</li>
+        <li><strong>2.</strong> PersonaEngine-3.0.2.exe → wait "Idle"</li>
+        <li><strong>3.</strong> OBS Studio → Spout capture live</li>
+        <li><strong>4.</strong> Say "Hi ARIA" → confirm voice + face</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

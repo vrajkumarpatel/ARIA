@@ -1,0 +1,66 @@
+╔══════════════════════════════════════════════════════════════════════════════╗                                                                              
+  ║                    ARIA — PersonaEngine 3.0 Architecture                    ║                                                                               
+  ╚══════════════════════════════════════════════════════════════════════════════╝                                                                              
+   
+    🎤 MICROPHONE                                                                                                                                               
+         │  PortAudio capture
+         ▼
+    ┌─────────────┐
+    │     ASR     │  Whisper  •  VAD (threshold 0.5)  •  "Aria" prompt hint
+    └──────┬──────┘
+           │  transcribed text
+           ▼
+    ┌─────────────┐
+    │     LLM     │  qwen3-32b  via  DashScope API  (streaming)
+    │             │  System prompt: personality.txt  •  conversation history
+    └──────┬──────┘
+           │  "[EMOTION:😊] hey, good to hear from you!"
+           │
+           ├─────────────────────────────────────────┐
+           │  strip emotion tags                     │  trigger expression
+           ▼                                         ▼
+      clean text                            ┌──────────────────┐
+                                            │  EmotionAnimator │
+           │                                │  17 expressions  │
+           ▼                                │  + motion groups │
+    ┌─────────────────────────────────────┐ └────────┬─────────┘
+    │               TTS                   │          │
+    │                                     │          │
+    │  Sentence segmentation              │          │
+    │       ↓                             │          │
+    │  eSpeak-NG phonemization            │          │
+    │       ↓                             │          │
+    │  Qwen3-TTS (GGUF • LLamaSharp)      │          │
+    │  ┌──────────┬───────────┬────────┐  │          │
+    │  │  Talker  │ Predictor │Decoder │  │          │
+    │  │  (GPU)   │  (GPU)    │(ONNX) │  │          │
+    │  └──────────┴───────────┴────────┘  │          │
+    │  24kHz PCM  •  chunks every ~0.64s  │          │
+    └──────────────────┬──────────────────┘          │
+                       │  AudioSegment               │
+                       ▼                             │
+    ┌─────────────────────────────────────┐          │
+    │            LIP SYNC                 │          │
+    │                                     │          │
+    │  Audio2Face (ONNX • GPU)            │          │
+    │  16kHz • 1s window • 0.5s stride    │          │
+    │  52 ARKit blendshapes → Live2D      │          │
+    │  60fps timeline per audio chunk     │          │
+    └──────────────────┬──────────────────┘          │
+                       │                             │
+                       ▼                             │
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │                            OUTPUT                                    │
+    │                                                                      │
+    │   🔊 Audio          👄 Lip Sync          📝 Subtitles               │
+    │   PortAudio         Live2D params        DynaPuff font               │
+    │   24kHz playback    @ 60fps              token-by-token              │
+    │                                                                      │
+    │                      Live2D Renderer (OpenGL)                        │
+    │                      Spout → OBS / streaming overlay                 │
+    └──────────────────────────────────────────────────────────────────────┘
+
+    ─────────────────────────────────────────────────────────────────────────
+    LATENCY     STT ~350ms  │  LLM ~300ms  │  TTS ~1-2s  │  Total ~2-3s
+    STACK       RTX 5070 Ti  •  CUDA 12.8  •  cuDNN 9.1.1  •  .NET 8
+    ─────────────────────────────────────────────────────────────────────────
