@@ -4,6 +4,8 @@
 **Showcase Deadline:** May 8, 2026 (NLU Capstone)  
 **Stack:** Live2D · Qwen3 TTS (GGUF/ONNX) · ElevenLabs TTS · Audio2Face Lip Sync · Groq LLM · Neo4j Memory · Python Proxy
 
+> **Scope note:** This is a raw debugging log kept during development and spans both sides of the project. Sections 1, 2, and 4 concern the third-party `PersonaEngine` avatar/TTS/lip-sync engine ([fagenorn/handcrafted-persona-engine](https://github.com/fagenorn/handcrafted-persona-engine)) — environment tuning and configuration, not original code. Section 3 (`llm_proxy.py`) is this repository's own Python code. See the top-level [README](../README.md#engineering-challenges) for the curated, correctly-attributed version of these entries.
+
 ---
 
 ## 1. CUDA / GPU Issues
